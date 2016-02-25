@@ -4,8 +4,8 @@
 
 CROSS_COMPILE = /usr/local/gp2xdev/bin/gp2x-
 
-SDL_CFLAGS = `/usr/local/gp2xdev/bin/sdl-config --cflags`
-SDL_LIBS = `/usr/local/gp2xdev/bin/sdl-config --libs`
+SDL_CFLAGS = `/usr/local/gp2xdev/bin/sdl2-config --cflags`
+SDL_LIBS = `/usr/local/gp2xdev/bin/sdl2-config --libs`
 
 CXX = $(CROSS_COMPILE)g++
 CC = $(CROSS_COMPILE)gcc

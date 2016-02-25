@@ -1,6 +1,6 @@
 AC_PREREQ(2.50)
 dnl AC_INIT(src/powermanga.c)
-AC_INIT([Powermanga], [0.93.1], [http://sf.net/projects/powermanga/bugs], [powermanga])
+AC_INIT([Powermanga], [1.00.0], [http://sf.net/projects/powermanga/bugs], [powermanga])
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_SYSTEM
 #AM_INIT_AUTOMAKE(powermanga,0.90)
@@ -46,7 +46,7 @@ else
 fi
 
 dnl  Check for SDL
-AM_PATH_SDL
+AM_PATH_SDL2
 
 if test "x${enable_devel}" = "xyes"; then
   dnl If defined [Ctrl] + [V], [Ctrl] + [P], [Ctrl] + [B] are available
@@ -62,10 +62,10 @@ dnl LDFLAGS_save="${LDFLAGS} ${SDL_LIBS}"
 
 if test "x${disable_sound}" = "xno"; then
   AC_DEFINE(USE_SDLMIXER,  1, [Enable sound (SDL Mixer)])
-  AC_CHECK_LIB(SDL_mixer, Mix_GetChunk, [
-    SDL_LIBS="-lSDL_mixer ${SDL_LIBS}"
+  AC_CHECK_LIB(SDL2_mixer, Mix_GetChunk, [
+    SDL_LIBS="-lSDL2_mixer ${SDL_LIBS}"
   ],[
-    AC_MSG_ERROR(Could not find -lSDL_mixer)
+    AC_MSG_ERROR(Could not find -lSDL2_mixer)
 ])
 else
   AC_MSG_RESULT([The sound has been disabled]);
