@@ -1,33 +1,25 @@
-Powermanga is an arcade 2D shoot-em-up game with 41 levels and more 
-than 200 sprites. It runs in 320x200 or 640x400 pixels, 
-with Window mode or full screen 
-and support for 8, 15, 16, 24, and 32 bpp. 
+MANGADualist is a fork of the famous TLK Powermanga 2D shoot-em-up game.
 
-PREREQUISITES
+Major changes:
 
-  You need:
-  - A IA-32, x86-64, PowerPC, ARM or MIPS platform
-  - 32 MB RAM and 80 MB swap
-  - Linux 2.x 
-  - SDL 1.2
-  - SDL_mixer
-  - the GCC C++ compiler
-  - GNU make
-  - (X.Org Server) 
-  - (X11 with the MIT-SHM extension headers)
-  - (LinuxThreads)
+	* Requires SDL2.
 
-COMPILING AND INSTALLING
+ToDo:
 
+	* Add dual player mode.
 
-  To install in /usr/local :
+Notes:
 
-       ./bootstrap
-       ./configure
-        make
-        su -c 'make install'
+	* The game play, graphics and music are not changed at all.
+	* Some hardware support might be defunct (as i do not have handheld device for testing).
+
+Fot the original game, please visit
+
+	linux.tlk.fr/games/Powermanga
 
 LEGAL
 
-  Powermanga is copyright TLK Games 1998-2014 and available under the
-  terms of the GNU General Public License. See COPYING for details.
+	Powermanga is copyright TLK Games and available under the term of the GNU General Public License.
+
+	MANGADualist is best protected by GPLv3.
+
