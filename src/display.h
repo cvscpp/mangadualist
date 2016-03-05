@@ -124,7 +124,7 @@ extern "C"
   bool create_movie_offscreen (void);
   void destroy_movie_offscreen (void);
 #ifdef POWERMANGA_SDL
-  bool init_video_mode (void);
+  void do_fullscreen (bool);
 #ifdef USE_SDL_JOYSTICK
   bool display_open_joysticks (void);
 #endif

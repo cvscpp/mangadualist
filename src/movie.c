@@ -245,20 +245,11 @@ movie_load (const char *filename)
           _p[1] = _pPal[0];
           _p[0] = 0;
 #else
-          if (power_conf->scale_x >= 2)
-            {
-              _p[0] = _pPal[2];
-              _p[1] = _pPal[1];
-              _p[2] = _pPal[0];
-              _p[3] = 0;
-            }
-          else
-            {
-              _p[2] = _pPal[2];
-              _p[1] = _pPal[1];
-              _p[0] = _pPal[0];
-              _p[3] = 0;
-            }
+          _p[2] = _pPal[2];
+          _p[1] = _pPal[1];
+          _p[0] = _pPal[0];
+          _p[3] = 0;
+
 #endif
           _p += 4;
           _pPal += 3;

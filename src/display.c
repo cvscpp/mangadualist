@@ -189,17 +189,6 @@ display_initialize (void)
         }
     }
 
-  if (power_conf->scale_x > 1)
-    {
-      screen_pixel_size = power_conf->scale_x;
-    }
-  else
-    {
-      if (power_conf->resolution == 640)
-        {
-          screen_pixel_size = 2;
-        }
-    }
   return TRUE;
 }
 

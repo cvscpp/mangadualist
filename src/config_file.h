@@ -48,11 +48,6 @@ extern "C"
     bool nosound;
     /** TRUE if disable timer */
     bool nosync;
-    /** 1, 2, 3 or 4 */
-    Sint32 scale_x;
-    /** 320 or 640 */
-    Sint32 resolution;
-    /** Joystick configuration **/
     Sint32 joy_x_axis;
     Sint32 joy_y_axis;
     Sint32 joy_fire;

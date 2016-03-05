@@ -155,34 +155,16 @@ main (Sint32 args_count, char **arguments)
 #if defined(POWERMANGA_HANDHELD_CONSOLE) || defined(_WIN32_WCE)
       /* We require a 320x200 output size to fit on
        * the GP2X or PSP's display */
-      power_conf->scale_x = 1;
-      power_conf->resolution = 320;
       power_conf->fullscreen = 1;
       pixel_size = 1;
 #endif
       if (power_conf->extract_to_png)
         {
-          power_conf->scale_x = 1;
-          power_conf->resolution = 320;
           power_conf->fullscreen = 0;
           power_conf->nosound = TRUE;
           pixel_size = 1;
         }
-      if (power_conf->resolution == 320)
-        {
-          vmode = 0;
-        }
-      else
-        {
-          if (power_conf->scale_x > 1)
-            {
-              vmode = 2;
-            }
-          else
-            {
-              vmode = 1;
-            }
-        }
+        vmode = 0;
       initialize_and_run ();
     }
   release_game ();
@@ -247,48 +229,9 @@ initialize_and_run (void)
     }
 #endif
 
-#ifdef SHAREWARE_VERSION
-  /* update counter */
-  Sint32 cpt = counter_shareware_update ("PowerManga", 0, 8);
-  if (cpt >= 8)
-    {
-      /* display first page order */
-      switch (power_conf->lang)
-        {
-        case FR_LANG:
-          show_page_order (1, "fr", cpt);
-          break;
-        case EN_LANG:
-          show_page_order (1, "en", cpt);
-          break;
-        default:
-          show_page_order (1, "en", cpt);
-          break;
-        }
-    }
-  counter_shareware_free ();
-#endif
-
   fps_init ();
   main_loop ();
   fps_print ();
-
-#ifdef SHAREWARE_VERSION
-  /* displaying of the third page order */
-  switch (power_conf->lang)
-    {
-    case FR_LANG:
-      show_page_order (3, "fr", 0);
-      break;
-    case EN_LANG:
-      show_page_order (3, "en", 0);
-      break;
-    default:
-      show_page_order (3, "en", 0);
-      break;
-    }
-  TTF_Quit ();
-#endif
 
   LOG_INF ("Powermanga exited normally");
   return TRUE;

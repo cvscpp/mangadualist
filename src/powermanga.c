@@ -374,7 +374,7 @@ update_frame (void)
         {
           power_conf->fullscreen = TRUE;
         }
-      init_video_mode ();
+      do_fullscreen(power_conf->fullscreen);
     }
   keys_down[K_F] = FALSE;
   keys_down[K_F11] = FALSE;

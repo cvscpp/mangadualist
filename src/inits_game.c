@@ -81,14 +81,6 @@ inits_game (void)
       return FALSE;
     }
 #endif
-#ifdef SHAREWARE_VERSION
-  if (TTF_Init () < 0)
-    {
-      LOG_ERR ("TTF_Init() return: %s", TTF_GetError ());
-      return FALSE;
-    }
-  LOG_INF ("SHAREWARE_VERSION TTF_Init() successful!");
-#endif
   /* initialize SDL or X11 display */
   if (!display_initialize ())
     {

@@ -52,10 +52,8 @@ configfile_reset_values ()
 {
   power_conf->fullscreen = TRUE;
   power_conf->nosound = FALSE;
-  power_conf->resolution = 640;
   power_conf->verbose = 0;
   power_conf->difficulty = 1;
-  power_conf->scale_x = 2;
 #if defined(_WIN32_WCE)
 /* FIXME use GetLocaleInfo() function to retrieve langage */
   power_conf->lang = EN_LANG;
@@ -98,10 +96,8 @@ configfile_print (void)
            "verbose: %i; difficulty: %i; lang: %s; scale_x: %i"
            "; joy_config %i %i %i %i %i; nosync: %i",
            power_conf->fullscreen, power_conf->nosound,
-           power_conf->resolution, power_conf->verbose,
-           power_conf->difficulty, lang_to_text[power_conf->lang],
-           power_conf->scale_x, power_conf->joy_x_axis,
-           power_conf->joy_y_axis, power_conf->joy_fire,
+           power_conf->verbose, power_conf->difficulty, lang_to_text[power_conf->lang],
+           power_conf->joy_x_axis, power_conf->joy_y_axis, power_conf->joy_fire,
            power_conf->joy_option, power_conf->joy_start, power_conf->nosync);
 }
 
@@ -291,26 +287,6 @@ configfile_load (void)
     {
       power_conf->verbose = 0;
     }
-  if (!lisp_read_int (lst, "scale_x", &power_conf->scale_x))
-    {
-      power_conf->scale_x = 2;
-    }
-  if (power_conf->scale_x < 1 || power_conf->scale_x > 4)
-    {
-      power_conf->scale_x = 2;
-    }
-  if (!lisp_read_int (lst, "resolution", &power_conf->resolution))
-    {
-      power_conf->resolution = 640;
-    }
-  if (power_conf->resolution != 320 && power_conf->resolution != 640)
-    {
-      power_conf->resolution = 640;
-    }
-  if (power_conf->scale_x > 1)
-    {
-      power_conf->resolution = 640;
-    }
   sub = search_for (lst, "joy_config");
   if (sub)
     sub = lisp_car_int (sub, &power_conf->joy_x_axis);
@@ -356,13 +332,7 @@ configfile_save (void)
            power_conf->fullscreen ? "#t" : "#f");
   fprintf (config, "\t(nosound %s)\n", power_conf->nosound ? "#t" : "#f");
   fprintf (config, "\t(nosync %s)\n", power_conf->nosync ? "#t" : "#f");
-
-  fprintf (config, "\n\t;; window size (320 or 640):\n");
-  fprintf (config, "\t(resolution  %d)\n", power_conf->resolution);
-
-  fprintf (config, "\n\t;; scale_x (1, 2, 3 or 4):\n");
-  fprintf (config, "\t(scale_x   %d)\n", power_conf->scale_x);
-
+  
   fprintf (config,
            "\n\t;; joy_config x_axis y_axis fire_button option_button start_button):\n");
   fprintf (config, "\t(joy_config %d %d %d %d %d)\n", power_conf->joy_x_axis,
@@ -439,9 +409,6 @@ configfile_scan_arguments (Sint32 arg_count, char **arg_values)
                    "-h, --help     print Help (this message) and exit\n"
                    "--version      print version information and exit\n"
                    "-x             extract sprites in PNG format and exit\n"
-                   "--320          game run in a 320*200 window (slow machine)\n"
-                   "--2x           scale2x\n"
-                   "--3x           scale3x\n" "--4x           scale4x\n"
                    "--joyconfig x,y,f,o,s\n"
                    "               use the indicated joystick axes and buttons for the\n"
                    "               x-axis, y-axis, fire button, option button, and start button,\n"
@@ -501,39 +468,6 @@ configfile_scan_arguments (Sint32 arg_count, char **arg_values)
           power_conf->fullscreen = TRUE;
           continue;
         }
-
-      /* resolution, low-res or high-res */
-      if (!strcmp (arg_values[i], "--320"))
-        {
-          power_conf->resolution = 320;
-          power_conf->scale_x = 1;
-          continue;
-        }
-      if (!strcmp (arg_values[i], "--640"))
-        {
-          power_conf->resolution = 640;
-          power_conf->scale_x = 1;
-          continue;
-        }
-      if (!strcmp (arg_values[i], "--2x"))
-        {
-          power_conf->scale_x = 2;
-          power_conf->resolution = 640;
-          continue;
-        }
-      if (!strcmp (arg_values[i], "--3x"))
-        {
-          power_conf->scale_x = 3;
-          power_conf->resolution = 640;
-          continue;
-        }
-      if (!strcmp (arg_values[i], "--4x"))
-        {
-          power_conf->scale_x = 4;
-          power_conf->resolution = 640;
-          continue;
-        }
-
 
       /* Joystick configuration */
       if (!strcmp (arg_values[i], "--joyconfig"))
