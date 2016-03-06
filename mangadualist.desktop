@@ -1,0 +1,22 @@
+[Desktop Entry]
+Categories=Game;ArcadeGame;
+Comment[en_US]=Play a vertical shoot'em up game
+Comment=Play a vertical shoot'em up game
+Comment[de]=Spiele ein vertikales "Shoot 'em up"-Spiel
+Exec=mangadualist
+GenericName[en_US]=MangaDualist
+GenericName=MangaDualist
+Icon=mangadualist
+Keywords=shmup;arcade;shooter;colourful;weapons;spaceship;
+MimeType=
+Name[en_US]=Mangadualist
+Name=Mangadualist
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
