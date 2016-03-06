@@ -406,11 +406,12 @@ configfile_scan_arguments (Sint32 arg_count, char **arg_values)
                    "--hard         hard bonuses\n"
                    "--------------------------------------------------------------\n"
                    "keys recognized during the game:\n"
-                   "[Ctrl] + [S]   enable/disable the music\n"
-                   "[Ctrl] + [Q]   finish the play current\n"
-                   "[Ctrl] + [A]   about Mangadualist\n"
-                   "[F10]          quit Mangadualist\n"
-                   "[P]            enable/disable pause\n"
+				   "[F1]   about Mangadualist\n"
+				   "[F4]   enable/disable fullscreen\n" 
+                   "[F5]   enable/disable the music\n"
+                   "[F8]   force game over\n"
+                   "[F10]  quit Mangadualist\n"
+                   "[F12]  enable/disable pause\n"
                    "[Page Down]    volume down\n"
                    "[Page Up]      volume up\n");
 #ifdef MANGADUALIST_SDL

@@ -664,17 +664,22 @@ key_status (const Uint8 * k)
   keys_down[K_8] = k[SDL_SCANCODE_8] | k[SDL_SCANCODE_KP_8];
   keys_down[K_9] = k[SDL_SCANCODE_9] | k[SDL_SCANCODE_KP_9];
   keys_down[K_0] = k[SDL_SCANCODE_0] | k[SDL_SCANCODE_KP_0];
+  /* about */  
   keys_down[K_F1] = k[SDL_SCANCODE_F1];
   keys_down[K_F2] = k[SDL_SCANCODE_F2];
   keys_down[K_F3] = k[SDL_SCANCODE_F3];
+  /* switch between full screen and windowed mode */  
   keys_down[K_F4] = k[SDL_SCANCODE_F4];
+  /* enable/disable the music */  
   keys_down[K_F5] = k[SDL_SCANCODE_F5];
   keys_down[K_F6] = k[SDL_SCANCODE_F6];
   keys_down[K_F7] = k[SDL_SCANCODE_F7];
+  /* force "Game Over" */  
   keys_down[K_F8] = k[SDL_SCANCODE_F8];
   keys_down[K_F9] = k[SDL_SCANCODE_F9];
   keys_down[K_F10] = k[SDL_SCANCODE_F10];
   keys_down[K_F11] = k[SDL_SCANCODE_F11];
+  /* enable/disable pause */  
   keys_down[K_F12] = k[SDL_SCANCODE_F12];
   keys_down[K_INSERT] = k[SDL_SCANCODE_INSERT];
   keys_down[K_SPACE] = k[SDL_SCANCODE_SPACE];
@@ -692,17 +697,12 @@ key_status (const Uint8 * k)
       keys_down[K_UP] = k[SDL_SCANCODE_UP];
       keys_down[K_DOWN] = k[SDL_SCANCODE_DOWN];
     }
-  /* [Ctrl] + [A]: ABOUT */
   keys_down[K_A] = k[SDL_SCANCODE_A];
-  /* switch between full screen and windowed mode */
   keys_down[K_F] = k[SDL_SCANCODE_F];
   keys_down[K_V] = k[SDL_SCANCODE_V];
   keys_down[K_B] = k[SDL_SCANCODE_B];
-  /* enable/disable pause */
   keys_down[K_P] = k[SDL_SCANCODE_P];
-  /* [Ctrl] + [Q]: force "Game Over" */
   keys_down[K_Q] = k[SDL_SCANCODE_G];
-  /* [Ctrl] + [S]: enable/disable the music */
   keys_down[K_S] = k[SDL_SCANCODE_S];
   /* right */
   keys_down[K_RIGHT] |= k[SDL_SCANCODE_KP_6];

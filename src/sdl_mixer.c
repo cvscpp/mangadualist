@@ -336,7 +336,7 @@ sound_handle (void)
     }
 
   /* [CTRL] + [S] released */
-  if (start_stop_music && !keys_down[K_CTRL] && !keys_down[K_S])
+  if (start_stop_music && !keys_down[K_CTRL] && !keys_down[K_F5])
     {
       start_stop_music = FALSE;
       if (music_enabled)
@@ -363,7 +363,7 @@ sound_handle (void)
     }
   else
     {
-      if (keys_down[K_CTRL] && keys_down[K_S])
+      if (keys_down[K_CTRL] && keys_down[K_F5])
         {
           start_stop_music = TRUE;
         }

@@ -274,18 +274,6 @@ update_frame (void)
   /* handle the main menu of Powermanga */
   menu_handle ();
 
-  /* [F1] spaceship_appears / [F2] spaceship disappears */
-#ifdef DEVELOPPEMENT
-  if (keys_down[K_F1])
-    {
-      spaceship_disappears = 1;
-    }
-  if (keys_down[K_F2] && starfield_speed == 0.0)
-    {
-      spaceship_show ();
-    }
-#endif
-
   /* handle "TLK Games" sprite logo */
   if (tlk_logo_is_move)
     {
@@ -353,18 +341,18 @@ update_frame (void)
     }
 
   /* [P] or [Pause] enable/disable pause */
-  if (!keys_down[K_CTRL] && (keys_down[K_P] || keys_down[K_PAUSE]))
+  if (!keys_down[K_CTRL] && (keys_down[K_F12] || keys_down[K_PAUSE]))
     {
       toggle_pause ();
     }
-  keys_down[K_P] = FALSE;
+  keys_down[K_F12] = FALSE;
   keys_down[K_PAUSE] = FALSE;   /* clear flag pause key */
 
 
   /* switch between full screen and windowed mode */
 #ifdef MANGADUALIST_SDL
-  if ((keys_down[K_F] && !is_playername_input ()
-       && menu_section != SECTION_ORDER) || keys_down[K_F11])
+  if ((keys_down[K_F4] && !is_playername_input ()
+       && menu_section != SECTION_ORDER))
     {
       if (power_conf->fullscreen)
         {
@@ -376,8 +364,7 @@ update_frame (void)
         }
       do_fullscreen(power_conf->fullscreen);
     }
-  keys_down[K_F] = FALSE;
-  keys_down[K_F11] = FALSE;
+  keys_down[K_F4] = FALSE;
 #endif
 
   /* control the speed of the spaceship */
