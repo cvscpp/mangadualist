@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "electrical_shock.h"
 #include "log_recorder.h"
 #include "images.h"
@@ -285,7 +285,7 @@ draw_bitmap_char_24 (unsigned char *src, unsigned char *dest,
                      Uint32 src_offset, Uint32 dest_offset)
 {
 
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_WARN ("not implemented: src = %p; dest = %p;  width = %i,"
             "height = %i, src_offset = %i, dest_offset = %i", src, dest,
             width, height, src_offset, dest_offset);
@@ -556,7 +556,7 @@ void
 put_sprite_mask_24bits (Uint32 _iColor, char *dest,
                         char *repeats_table, Uint32 size)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_WARN ("not implemented: _iColor = %i; dest = %p;"
             "repeats_table = %p; size = %i", _iColor, dest, repeats_table,
             size);
@@ -606,7 +606,7 @@ poly16bits (char *dest, Sint32 numof_pixels, Sint32 color)
 void
 poly24bits (char *dest, Sint32 numof_pixels, Sint32 color)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_WARN ("not implemented: dest = %p; numof_pixels = %i; color = %i", dest,
             numof_pixels, color);
 #else
@@ -764,7 +764,7 @@ draw_electrical_shock_16 (char *dest, Eclair * shock, Sint32 numof_iterations)
 void
 draw_electrical_shock_24 (char *dest, Eclair * shock, Sint32 numof_iterations)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_WARN ("not implemented: dest = %p; shock = %p; numof_iterations = %i",
             dest, shock, numof_iterations);
 #else
@@ -823,7 +823,7 @@ _COPY2X16BITS_512x440 (char *_src, char *_dest, Uint32 height)
 void
 _COPY2X24BITS_512x440 (char *_src, char *_dest, Uint32 height)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_WARN ("not implemented. _src = %p; _dest = %p; height = %i", _src,
             _dest, height);
 #else
@@ -914,7 +914,7 @@ void
 draw_rectangle_24 (char *adresse, Sint32 x, Sint32 y,
                    Sint32 coul, Sint32 width, Sint32 height)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_WARN
     ("not implemented. adresse = %p, x = %i, y = %i, coul = %i, width = %i, height = %i",
      adresse, x, y, coul, width, height);

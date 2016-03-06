@@ -1,9 +1,9 @@
 AC_PREREQ(2.50)
-dnl AC_INIT(src/powermanga.c)
-AC_INIT([Powermanga], [1.00.0], [http://sf.net/projects/powermanga/bugs], [powermanga])
+dnl AC_INIT(src/mangadualist.c)
+AC_INIT([Mangadualist], [1.00.0], [https://github.com/cvscpp/mangadualist/issues], [mangadualist])
 AC_CONFIG_AUX_DIR(autotools)
 AC_CANONICAL_SYSTEM
-#AM_INIT_AUTOMAKE(powermanga,0.90)
+#AM_INIT_AUTOMAKE(mangadualist,0.01)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_HEADER(config.h)
 
@@ -30,7 +30,7 @@ disable_png_export=yes, disable_png_export=no)
 dnl  Check for X
 if test "x${enable_x11}" = "xyes"; then
   AC_MSG_RESULT([Use the Xlib library for display]);
-  AC_DEFINE(POWERMANGA_X11, 1, Define to enable X11 support)
+  AC_DEFINE(MANGADUALIST_X11, 1, Define to enable X11 support)
   AC_PATH_X
   XLIB_CFLAGS="-I${x_includes}"
   AC_CHECK_LIB(Xxf86dga, XF86DGAQueryExtension, [
@@ -41,7 +41,7 @@ if test "x${enable_x11}" = "xyes"; then
   AC_SUBST(XLIB_CFLAGS)
   AC_SUBST(XLIB_LIBS)
 else
-  AC_DEFINE(POWERMANGA_SDL, 1, Define to enable SDL support)
+  AC_DEFINE(MANGADUALIST_SDL, 1, Define to enable SDL support)
   AC_MSG_RESULT([Use the SDL for display]);
 fi
 
@@ -126,7 +126,7 @@ AC_OUTPUT(
 
 echo "
 
-Powermanga ready for building!
+Mangadualist ready for building!
 
   enable-x11        : $enable_x11
   enable_devel      : $enable_devel

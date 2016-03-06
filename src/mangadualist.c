@@ -1,5 +1,5 @@
 /** 
- * @file powermanga.c
+ * @file mangadualist.c
  * @brief The main loop of the game Powermanga 
  * @date 2012-08-26 
  * @author Jean-Michel Martin de Santero
@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "congratulations.h"
@@ -362,7 +362,7 @@ update_frame (void)
 
 
   /* switch between full screen and windowed mode */
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
   if ((keys_down[K_F] && !is_playername_input ()
        && menu_section != SECTION_ORDER) || keys_down[K_F11])
     {

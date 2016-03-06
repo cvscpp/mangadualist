@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "assembler.h"
 #include "images.h"
@@ -41,7 +41,7 @@
 #include "scalebit.h"
 #include "sprites_string.h"
 #include "texts.h"
-#ifdef POWERMANGA_X11
+#ifdef MANGADUALIST_X11
 /* use XSHM Ximage */
 #define UTILISE_XSHM 1
 #include <X11/keysym.h>
@@ -289,7 +289,7 @@ display_init (void)
       LOG_ERR ("XCreateWindow() failed!");
       return FALSE;
     }
-  XStoreName (x11_display, main_window_id, "PowerManga by TLK Games");
+  XStoreName (x11_display, main_window_id, "Mangadualist a fork of TLK Powermanga");
   XSelectInput (x11_display, main_window_id, EVENT_MASKS);
   protocols = XInternAtom (x11_display, "WM_DELETE_WINDOW", 0);
   XSetWMProtocols (x11_display, main_window_id, &protocols, 1);

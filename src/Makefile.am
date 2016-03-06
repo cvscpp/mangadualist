@@ -1,21 +1,19 @@
 
 gamesdir = $(prefix)/games
-scoredir = /var/games/powermanga
-score = powermanga.hi
+scoredir = /var/games/mangadualist
+score = mangadualist.hi
 
-games_PROGRAMS = powermanga
-powermanga_SOURCES = $(SOURCES_MAIN) $(SOURCES_C) $(SOURCES_ASM)
-powermanga_CFLAGS = -DPREFIX=\"$(prefix)\" \
+games_PROGRAMS = mangadualist
+mangadualist_SOURCES = $(SOURCES_MAIN) $(SOURCES_C) $(SOURCES_ASM)
+mangadualist_CPFLAGS = -DPREFIX=\"$(prefix)\" \
                     -DSCOREFILE=\"$(scoredir)/$(score)\" \
                     @XLIB_CFLAGS@ @SDL_CFLAGS@ 
-powermanga_LDADD = @XLIB_LIBS@ @SDL_LIBS@ -lm
+mangadualist_LDADD = @XLIB_LIBS@ @SDL_LIBS@ -lm
 
 install-data-hook:
-	-chown root:games "$(DESTDIR)/$(gamesdir)/powermanga"
-	-chmod 2755 "$(DESTDIR)/$(gamesdir)/powermanga"
+	-chown root:games "$(DESTDIR)/$(gamesdir)/mangadualist"
+	-chmod 2755 "$(DESTDIR)/$(gamesdir)/mangadualist"
 	$(INSTALL) -d $(DESTDIR)/$(scoredir)
-	$(INSTALL) -d $(DESTDIR)/$(mandir)/fr/man6/
-	$(INSTALL) -c -m 644 ../man/powermanga.fr.6 $(DESTDIR)/$(mandir)/fr/man6/powermanga.6
 	-for suffix in "-easy" "" "-hard"; do \
 	  touch "$(DESTDIR)/$(scoredir)/$(score)$$suffix"; \
 	  chown root:games "$(DESTDIR)/$(scoredir)/$(score)$$suffix"; \
@@ -31,11 +29,9 @@ SOURCES_C = gfxroutines.c gfxroutines.h
 endif
 
 SOURCES_MAIN = \
-  powermanga.c \
+  mangadualist.c \
   bonus.c \
   bonus.h \
-  counter_shareware.c \
-  counter_shareware.h \
   congratulations.c \
   congratulations.h \
   config_file.c \
@@ -81,7 +77,7 @@ SOURCES_MAIN = \
   log_recorder.h \
   options_panel.c \
   options_panel.h \
-  powermanga.h \
+  mangadualist.h \
   scalebit.c \
   scalebit.h \
   scale2x.c \
@@ -105,8 +101,6 @@ SOURCES_MAIN = \
   shots.h \
   shockwave.c \
   shockwave.h \
-  script_page.c \
-  script_page.h \
   starfield.c \
   starfield.h \
   text_overlay.c \

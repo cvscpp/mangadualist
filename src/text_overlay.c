@@ -24,7 +24,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "display.h"
@@ -212,9 +212,9 @@ text_overlay_draw (void)
   else
     {
       /* [Ctrl] key pressed? */
-#if !defined(_WIN32_WCE)
+
       if (keys_down[K_CTRL])
-#endif
+
         {
           if (keys_down[K_A])
             {
@@ -274,9 +274,9 @@ text_overlay_draw (void)
 #endif
         }
 #ifdef UNDER_DEVELOPMENT
-#if !defined(_WIN32_WCE)
+
       else
-#endif
+
         {
           if (keys_down[K_RETURN] || keys_down[K_SPACE])
             {
@@ -524,7 +524,7 @@ draw_cheats_menu (void)
 static const char about_texts[] = {
   "********************************@"
     "*                              *@* "
-    POWERMANGA_VERSION
+    MANGADUALIST_VERSION
     "*@*                LINUX VERSION *@"
     "* (c) 1998-2015 TLK-GAMES      *@"
     "*                              *@"

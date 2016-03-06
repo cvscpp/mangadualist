@@ -1,5 +1,5 @@
 /**
- * @file powermanga.h
+ * @file mangadualist.h
  * @brief global header file
  * @date 2015-06-28
  * @author Jean-Michel Martin de Santero
@@ -24,61 +24,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-#ifndef __POWERMANGA__
-#define __POWERMANGA__
+#ifndef __MANGADUALIST__
+#define __MANGADUALIST__
 #if !defined(PACKAGE_STRING)
-#define PACKAGE_STRING "Powermanga 0.93.1"
+#define PACKAGE_STRING "Mangadualist 0.0.1"
 #endif
-#define POWERMANGA_VERSION PACKAGE_STRING " 2015-06-28 "
+#define MANGADUALIST_VERSION PACKAGE_STRING " 2016-03-06 "
 
-#if !defined(POWERMANGA_SDL) && !defined(POWERMANGA_X11)
-#define POWERMANGA_SDL
+#if !defined(MANGADUALIST_SDL) && !defined(MANGADUALIST_X11)
+#define MANGADUALIST_SDL
 #endif
 
-#if defined(POWERMANGA_X11)
-#undef POWERMANGA_SDL
+#if defined(MANGADUALIST_X11)
+#undef MANGADUALIST_SDL
 #else
-#if !defined(POWERMANGA_SDL)
-#define POWERMANGA_SDL
+#if !defined(MANGADUALIST_SDL)
+#define MANGADUALIST_SDL
 #endif
-#endif
-
-#ifdef _WIN32
-#pragma warning(push,3)
 #endif
 
 #include <assert.h>
-#ifndef _WIN32_WCE
+
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
-#ifdef _WIN32
-#ifndef _WIN32_WCE
-#include <io.h>
-#include <direct.h>
-#endif
-#include <windows.h>
-  /* for ShellExecute, to launch HTLM help */
-#include "shellapi.h"
-#else
 #include <dirent.h>
 #include <sys/time.h>
 #include <sys/utsname.h>
 #include <unistd.h>
-#endif
-
-#ifdef SHAREWARE_VERSION
-#include <SDL/SDL_ttf.h>
-#include <SDL/SDL_image.h>
-#include "counter_shareware.h"
-#endif
 
 #ifndef __cplusplus
 #if defined(HAVE_STDBOOL_H)
@@ -101,29 +81,14 @@
 #endif
 #endif
 
-/** PlayStation Portable port, PSP is a handheld game console released
- * and currently manufactured by Sony Computer Entertainment */
-/* #define POWERMANGA_PSP */
-/** GP2X port, GP2X is an open-source,
- * Linux-based handheld video game console */
-/* #define POWERMANGA_GP2X */
-#ifdef POWERMANGA_GP2X
-#undef POWERMANGA_PSP
-#define POWERMANGA_HANDHELD_CONSOLE
-#endif
-#ifdef POWERMANGA_PSP
-#undef POWERMANGA_GP2X
-#define POWERMANGA_HANDHELD_CONSOLE
-#endif
-
 #ifndef SCOREFILE
-#define SCOREFILE "powermanga-scores"
+#define SCOREFILE "mangadualist-scores"
 #endif
 #ifndef PREFIX
 #define PREFIX ""
 #endif
 
-#ifndef POWERMANGA_SDL
+#ifndef MANGADUALIST_SDL
 
 /** Use X Window for display */
 #include <X11/keysym.h>
@@ -137,11 +102,7 @@ typedef unsigned int Uint32;
 
 /** Else use SDL */
 #else
-#if defined(_WIN32_WCE) || defined(_WIN32)
-#include <SDL.h>
-#else
 #include <SDL2/SDL.h>
-#endif
 
 #endif
 /** Devel flag */
@@ -151,30 +112,17 @@ typedef unsigned int Uint32;
 #include <png.h>
 #endif
 
-#if !defined(_WIN32_WCE)
-#define USE_SCALE2X
-#else
-  /* Sound is not currently supported under Windows CE */
-#undef USE_SDLMIXER
-#endif
-
 #ifdef USE_SDLMIXER
-#if defined(POWERMANGA_X11)
+#if defined(MANGADUALIST_X11)
 #include <SDL2/SDL.h>
 #endif
 #include <SDL2/SDL_thread.h>
 #include <SDL2/SDL_mixer.h>
 #endif
 
-#ifdef _WIN32
-#pragma warning(pop)
-#endif
-
-
 /* #define SHAREWARE_VERSION */
 /** Maximum number of levels in the game, range 0 to 41 */
 #define MAX_NUM_OF_LEVELS 41
-
 #define TWO_PI 6.28318530718f
 #define PI 3.14159265359f
 #define HALF_PI 1.57079632679f
@@ -206,7 +154,7 @@ extern "C"
   /* "special_keys.c" file */
   void special_keys (void);
 #endif
-  /* "powermanga.c" file */
+  /* "mangadualist.c" file */
   bool update_frame ();
   bool toggle_pause ();
   /** If TRUE display "GAME OVER" */

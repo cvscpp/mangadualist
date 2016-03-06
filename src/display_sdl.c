@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "assembler.h"
 #include "images.h"
@@ -41,68 +41,10 @@
 #ifdef USE_SCALE2X
 #include "scalebit.h"
 #endif
-#include "script_page.h"
 #include "sprites_string.h"
 #include "texts.h"
 
-#ifdef POWERMANGA_SDL
-
-#if defined(POWERMANGA_GP2X) || defined(_WIN32_WCE)
-static Uint32 display_offset_y = 0;
-#endif
-
-#ifdef POWERMANGA_GP2X
-/* GP2X button codes, as received through SDL joystick events */
-typedef enum
-{
-  GP2X_BUTTON_UP,
-  GP2X_BUTTON_UPLEFT,
-  GP2X_BUTTON_LEFT,
-  GP2X_BUTTON_DOWNLEFT,
-  GP2X_BUTTON_DOWN,
-  GP2X_BUTTON_DOWNRIGHT,
-  GP2X_BUTTON_RIGHT,
-  GP2X_BUTTON_UPRIGHT,
-  GP2X_BUTTON_START,
-  GP2X_BUTTON_SELECT,
-  GP2X_BUTTON_R,
-  GP2X_BUTTON_L,
-  GP2X_BUTTON_A,
-  GP2X_BUTTON_B,
-  GP2X_BUTTON_Y,
-  GP2X_BUTTON_X,
-  GP2X_BUTTON_VOLUP,
-  GP2X_BUTTON_VOLDOWN,
-  GP2X_BUTTON_CLICK,
-  GP2X_NUM_BUTTONS
-} GP2X_BUTTONS_CODE;
-/* The current state of all the GP2X buttons is stored in
- * this array - used to handle multi-key actions */
-static bool gp2x_buttons[GP2X_NUM_BUTTONS];
-/* The resolution the GP2X runs at */
-static const Sint32 GP2X_VIDEO_HEIGHT = 240;
-#endif
-
-#ifdef POWERMANGA_PSP
-/* PSP button codes, as received through SDL joystick events */
-typedef enum
-{
-  PSP_BUTTON_Y,
-  PSP_BUTTON_B,
-  PSP_BUTTON_A,
-  PSP_BUTTON_X,
-  PSP_BUTTON_L,
-  PSP_BUTTON_R,
-  PSP_BUTTON_DOWN,
-  PSP_BUTTON_LEFT,
-  PSP_BUTTON_UP,
-  PSP_BUTTON_RIGHT,
-  PSP_BUTTON_SELECT,
-  PSP_BUTTON_START,
-  PSP_NUM_BUTTONS
-} PSP_BUTTONS_CODE;
-bool psp_buttons[PSP_NUM_BUTTONS];
-#endif
+#ifdef MANGADUALIST_SDL
 
 /* SDL surfaces */
 #define MAX_OF_SURFACES 100
@@ -127,12 +69,8 @@ static SDL_Surface *surfaces_list[MAX_OF_SURFACES];
 static Uint32 numof_joysticks = 0;
 static SDL_Joystick **sdl_joysticks = NULL;
 #endif
-#ifdef WIN32
-/** Gf (vmode == 1) vmode2 = 0 (640x400) or vmode2 = 1 (640x480) */
-Sint32 vmode2 = 1;
-#else
+
 Sint32 vmode2 = 0;
-#endif
 
 static void display_movie (void);
 static void display (void);
@@ -147,7 +85,7 @@ void display_close_joysticks (void);
 void key_status (const Uint8 * k);
 /** Color table in 8-bit depth */
 SDL_Color *sdl_color_palette = NULL;
-static const char window_tile[] = POWERMANGA_VERSION " by TLK Games (SDL)\0";
+static const char window_tile[] = MANGADUALIST_VERSION " powered by TLK Powermanga (SDL)\0";
 /** If TRUE reverses the horizontal and vertical controls */
 static bool is_reverse_ctrl = FALSE;
 static bool pause_will_disable = FALSE;
@@ -162,8 +100,6 @@ display_init (void)
   Uint32 i;
   Uint32 sdl_flag;
 
-#ifndef POWERMANGA_HANDHELD_CONSOLE
-#endif
   for (i = 0; i < MAX_OF_SURFACES; i++)
     {
       surfaces_list[i] = (SDL_Surface *) NULL;
@@ -226,7 +162,7 @@ display_init (void)
       if (bits_per_pixel < 8)
         {
 
-          LOG_ERR ("Powermanga need 8 bits per pixels minimum"
+          LOG_ERR ("Mangadualist need 8 bits per pixels minimum"
                    " (256 colors)");
           return FALSE;
         }	
@@ -250,13 +186,6 @@ display_init (void)
       LOG_ERR ("SDL_CreateTextureFromSurface() return %s", SDL_GetError ());
       return FALSE;
     }
-  
-#ifdef POWERMANGA_GP2X
-  /* The native resolution is 320x200, so we scale up to 320x240
-   * when updating the screen */
-  window_height = 240;
-#endif
-  
   
   LOG_INF ("video has been successfully initialized");
   return TRUE;
@@ -423,230 +352,6 @@ create_palettes (void)
     }
   return TRUE;
 }
-
-/**
- * Handle buttons of handheld video game console
- * @param event Pointer to a SDL_Event structure
- */
-#ifdef POWERMANGA_HANDHELD_CONSOLE
-static void
-display_handle_console_buttons (SDL_Event * event)
-{
-#ifdef POWERMANGA_GP2X
-  if (event->jbutton.button >= GP2X_NUM_BUTTONS)
-    {
-      return;
-    }
-  if (event->type == SDL_JOYBUTTONDOWN)
-    {
-      gp2x_buttons[event->jbutton.button] = TRUE;
-      if (event->jbutton.button == GP2X_BUTTON_UP
-          || event->jbutton.button == GP2X_BUTTON_UPRIGHT
-          || event->jbutton.button == GP2X_BUTTON_UPRIGHT)
-        {
-          sprites_string_set_joy (IJOY_TOP);
-        }
-      if (event->jbutton.button == GP2X_BUTTON_DOWN
-          || event->jbutton.button == GP2X_BUTTON_DOWNLEFT
-          || event->jbutton.button == GP2X_BUTTON_DOWNRIGHT)
-        {
-          sprites_string_set_joy (IJOY_DOWN);
-        }
-
-      if (event->jbutton.button == GP2X_BUTTON_LEFT
-          || event->jbutton.button == GP2X_BUTTON_UPLEFT
-          || event->jbutton.button == GP2X_BUTTON_DOWNLEFT
-          || event->jbutton.button == GP2X_BUTTON_L)
-        {
-          sprites_string_set_joy (IJOY_LEFT);
-        }
-
-      if (event->jbutton.button == GP2X_BUTTON_RIGHT
-          || event->jbutton.button == GP2X_BUTTON_UPRIGHT
-          || event->jbutton.button == GP2X_BUTTON_DOWNRIGHT
-          || event->jbutton.button == GP2X_BUTTON_R)
-        {
-          sprites_string_set_joy (IJOY_RIGHT);
-        }
-      if (event->jbutton.button == GP2X_BUTTON_A
-          || event->jbutton.button == GP2X_BUTTON_B
-          || event->jbutton.button == GP2X_BUTTON_CLICK)
-        {
-          sprites_string_set_joy (IJOY_FIRE);
-        }
-      if (event->jbutton.button == GP2X_BUTTON_X
-          || event->jbutton.button == GP2X_BUTTON_Y)
-        {
-          sprites_string_set_joy (IJOY_OPT);
-        }
-    }
-  else
-    {
-      gp2x_buttons[event->jbutton.button] = FALSE;
-      if (event->jbutton.button == GP2X_BUTTON_UP
-          || event->jbutton.button == GP2X_BUTTON_UPRIGHT
-          || event->jbutton.button == GP2X_BUTTON_UPRIGHT)
-        {
-          sprites_string_clr_joy (IJOY_TOP);
-        }
-      if (event->jbutton.button == GP2X_BUTTON_DOWN
-          || event->jbutton.button == GP2X_BUTTON_DOWNLEFT
-          || event->jbutton.button == GP2X_BUTTON_DOWNRIGHT)
-        {
-          sprites_string_clr_joy (IJOY_DOWN);
-        }
-
-      if (event->jbutton.button == GP2X_BUTTON_LEFT
-          || event->jbutton.button == GP2X_BUTTON_UPLEFT
-          || event->jbutton.button == GP2X_BUTTON_DOWNLEFT
-          || event->jbutton.button == GP2X_BUTTON_L)
-        {
-          sprites_string_clr_joy (IJOY_LEFT);
-        }
-
-      if (event->jbutton.button == GP2X_BUTTON_RIGHT
-          || event->jbutton.button == GP2X_BUTTON_UPRIGHT
-          || event->jbutton.button == GP2X_BUTTON_DOWNRIGHT
-          || event->jbutton.button == GP2X_BUTTON_R)
-        {
-          sprites_string_clr_joy (IJOY_RIGHT);
-        }
-      if (event->jbutton.button == GP2X_BUTTON_A
-          || event->jbutton.button == GP2X_BUTTON_B
-          || event->jbutton.button == GP2X_BUTTON_CLICK)
-        {
-          sprites_string_clr_joy (IJOY_FIRE);
-        }
-      if (event->jbutton.button == GP2X_BUTTON_X
-          || event->jbutton.button == GP2X_BUTTON_Y)
-        {
-          sprites_string_clr_joy (IJOY_OPT);
-        }
-    }
-  /* This button mapping conforms to the GP2X Common User Interface
-     Recommendations, as of 2006-07-29, available from
-     http://wiki.gp2x.org/wiki/Common_User_Interface_Recommendations */
-
-  /* Directions (UDLR) */
-  joy_top = gp2x_buttons[GP2X_BUTTON_UP]
-    | gp2x_buttons[GP2X_BUTTON_UPLEFT] | gp2x_buttons[GP2X_BUTTON_UPRIGHT];
-  joy_down = gp2x_buttons[GP2X_BUTTON_DOWN]
-    | gp2x_buttons[GP2X_BUTTON_DOWNLEFT]
-    | gp2x_buttons[GP2X_BUTTON_DOWNRIGHT];
-  joy_left = gp2x_buttons[GP2X_BUTTON_LEFT]
-    | gp2x_buttons[GP2X_BUTTON_UPLEFT]
-    | gp2x_buttons[GP2X_BUTTON_DOWNLEFT] | gp2x_buttons[GP2X_BUTTON_L];
-  joy_right = gp2x_buttons[GP2X_BUTTON_RIGHT]
-    | gp2x_buttons[GP2X_BUTTON_UPRIGHT]
-    | gp2x_buttons[GP2X_BUTTON_DOWNRIGHT] | gp2x_buttons[GP2X_BUTTON_R];
-
-  /* pause (in game) / Return (in menu) */
-  keys_down[K_PAUSE] = keys_down[K_RETURN] = gp2x_buttons[GP2X_BUTTON_START];
-
-  /* escape (exit to menu) */
-  keys_down[K_ESCAPE] = gp2x_buttons[GP2X_BUTTON_SELECT];
-
-  /* volume ctrl */
-  keys_down[K_PAGEUP] = gp2x_buttons[GP2X_BUTTON_VOLUP];
-  keys_down[K_PAGEDOWN] = gp2x_buttons[GP2X_BUTTON_VOLDOWN];
-
-  fire_button_down = gp2x_buttons[GP2X_BUTTON_A]
-    | gp2x_buttons[GP2X_BUTTON_B] | gp2x_buttons[GP2X_BUTTON_CLICK];
-
-  /* special (powerup), also control for multi-key commands */
-  option_button_down = gp2x_buttons[GP2X_BUTTON_X]
-    | gp2x_buttons[GP2X_BUTTON_Y];
-
-  /* Quit */
-  keys_down[K_Q] = FALSE;
-  quit_game = gp2x_buttons[GP2X_BUTTON_CLICK]
-    & gp2x_buttons[GP2X_BUTTON_START];
-#endif
-#ifdef POWERMANGA_PSP
-  if (event->jbutton.button >= PSP_NUM_BUTTONS)
-    {
-      return;
-    }
-  if (event->type == SDL_JOYBUTTONDOWN)
-    {
-      psp_buttons[event->jbutton.button] = TRUE;
-      if (event->jbutton.button == PSP_BUTTON_UP)
-        {
-          sprites_string_set_joy (IJOY_TOP);
-        }
-      if (event->jbutton.button == PSP_BUTTON_DOWN)
-        {
-          sprites_string_set_joy (IJOY_DOWN);
-        }
-
-      if (event->jbutton.button == PSP_BUTTON_LEFT)
-        {
-          sprites_string_set_joy (IJOY_LEFT);
-        }
-
-      if (event->jbutton.button == PSP_BUTTON_RIGHT)
-        {
-          sprites_string_set_joy (IJOY_RIGHT);
-        }
-      if (event->jbutton.button == PSP_BUTTON_A)
-        {
-          sprites_string_set_joy (IJOY_FIRE);
-        }
-      if (event->jbutton.button == PSP_BUTTON_X)
-        {
-          sprites_string_set_joy (IJOY_OPT);
-        }
-    }
-  else
-    {
-      psp_buttons[event->jbutton.button] = FALSE;
-      if (event->jbutton.button == PSP_BUTTON_UP)
-        {
-          sprites_string_clr_joy (IJOY_TOP);
-        }
-      if (event->jbutton.button == PSP_BUTTON_DOWN)
-        {
-          sprites_string_clr_joy (IJOY_DOWN);
-        }
-
-      if (event->jbutton.button == PSP_BUTTON_LEFT)
-        {
-          sprites_string_clr_joy (IJOY_LEFT);
-        }
-
-      if (event->jbutton.button == PSP_BUTTON_RIGHT)
-        {
-          sprites_string_clr_joy (IJOY_RIGHT);
-        }
-      if (event->jbutton.button == PSP_BUTTON_A)
-        {
-          sprites_string_clr_joy (IJOY_FIRE);
-        }
-      if (event->jbutton.button == PSP_BUTTON_X)
-        {
-          sprites_string_clr_joy (IJOY_OPT);
-        }
-    }
-
-  /* Directions (UDLR) */
-  joy_top = psp_buttons[PSP_BUTTON_UP];
-  joy_down = psp_buttons[PSP_BUTTON_DOWN];
-  joy_left = psp_buttons[PSP_BUTTON_LEFT];
-  joy_right = psp_buttons[PSP_BUTTON_RIGHT];
-
-  /* pause (in game) / Return (in menu) */
-  keys_down[K_PAUSE] = keys_down[K_RETURN] = psp_buttons[PSP_BUTTON_START];
-
-  /* escape (exit to menu) */
-  keys_down[K_ESCAPE] = psp_buttons[PSP_BUTTON_SELECT];
-
-  fire_button_down = psp_buttons[PSP_BUTTON_A];
-
-  /* special (powerup), also control for multi-key commands */
-  option_button_down = psp_buttons[PSP_BUTTON_X];
-#endif
-}
-#endif
 
 /**
  * Switch to pause when the application loses focus or disables the
@@ -836,9 +541,6 @@ display_handle_events (void)
           }
           break;
         case SDL_JOYBUTTONDOWN:
-#ifdef POWERMANGA_HANDHELD_CONSOLE
-          display_handle_console_buttons (&event);
-#else
           if (event.jbutton.button == power_conf->joy_start)
             {
               start_button_down = TRUE;
@@ -854,11 +556,7 @@ display_handle_events (void)
               sprites_string_set_joy (IJOY_OPT);
             }
           break;
-#endif
         case SDL_JOYBUTTONUP:
-#ifdef POWERMANGA_HANDHELD_CONSOLE
-          display_handle_console_buttons (&event);
-#else
           if (event.jbutton.button == power_conf->joy_start)
             {
               start_button_down = FALSE;
@@ -873,7 +571,6 @@ display_handle_events (void)
               option_button_down = FALSE;
               sprites_string_clr_joy (IJOY_OPT);
             }
-#endif
           break;
         case SDL_QUIT:
           quit_game = TRUE;
@@ -1063,11 +760,7 @@ static void
 get_rect (SDL_Rect * rect, Sint16 x, Sint16 y, Sint16 w, Sint16 h)
 {
   rect->x = x;
-#if defined (POWERMANGA_GP2X) || defined (_WIN32_WCE)
-  rect->y = y + (Sint16) display_offset_y;
-#else
   rect->y = y;
-#endif
   rect->w = w;
   rect->h = h;
 }

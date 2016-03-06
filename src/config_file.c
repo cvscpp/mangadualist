@@ -25,14 +25,14 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "config_file.h"
 #include "lispreader.h"
 #include "log_recorder.h"
 
-#define CONFIG_DIR_NAME "tlk-games"
-#define CONFIG_FILE_NAME "powermanga.conf"
+#define CONFIG_DIR_NAME "alphadelusion"
+#define CONFIG_FILE_NAME "mangadualist.conf"
 
 config_file *power_conf = NULL;
 static const char *lang_to_text[MAX_OF_LANGUAGES] = { "en", "fr", "it" };
@@ -54,10 +54,6 @@ configfile_reset_values ()
   power_conf->nosound = FALSE;
   power_conf->verbose = 0;
   power_conf->difficulty = 1;
-#if defined(_WIN32_WCE)
-/* FIXME use GetLocaleInfo() function to retrieve langage */
-  power_conf->lang = EN_LANG;
-#else
   if (getenv ("LANG") != NULL)
     {
       if (strncmp (getenv ("LANG"), "fr", 2) == 0)
@@ -77,7 +73,6 @@ configfile_reset_values ()
     {
       power_conf->lang = EN_LANG;
     }
-#endif
   power_conf->extract_to_png = FALSE;
   power_conf->joy_x_axis = 0;
   power_conf->joy_y_axis = 1;
@@ -115,9 +110,6 @@ configfile_check_dir (void)
       /* Determines the size of the string of the directory
        * and allocates memory */
       length = strlen (config_filename) + 3;
-#ifdef _WIN32
-      length++;
-#else
       if (getenv ("XDG_CONFIG_HOME") != NULL)
         {
           length += strlen (getenv ("XDG_CONFIG_HOME")) + 1;
@@ -134,7 +126,6 @@ configfile_check_dir (void)
             }
           length += strlen ("/.config") + 1;
         }
-#endif
       config_dir = memory_allocation (length);
       if (config_dir == NULL)
         {
@@ -142,11 +133,6 @@ configfile_check_dir (void)
           return FALSE;
         }
     }
-#ifdef _WIN32
-  _snprintf (config_dir, strlen (config_dir) - 1, "./%s", config_filename);
-  /* create directory if not exist */
-  create_dir (config_dir);
-#else
   if (getenv ("XDG_CONFIG_HOME") != NULL)
     {
       snprintf (config_dir, strlen (config_dir) - 1, "%s/%s",
@@ -179,20 +165,18 @@ configfile_check_dir (void)
       closedir (dir);
       dir = NULL;
     }
-#endif
   return TRUE;
 }
 
 /**
- * Load configuration file from "~/.tlkgames/powermanga.conf"
+ * Load configuration file from "~/.alphadelusion/mangadualist.conf"
  * @return TRUE if it completed successfully or FALSE otherwise
  */
 bool
 configfile_load (void)
 {
-#if !defined(_WIN32_WCE)
   Uint32 length;
-#endif
+
   lisp_object_t *root_obj, *lst, *sub;
   char *str;
   /* allocate config structure */
@@ -213,14 +197,6 @@ configfile_load (void)
 
   if (configname == NULL)
     {
-#if defined(_WIN32_WCE)
-      configname = locate_data_file (config_file_name);
-      if (configname == NULL)
-        {
-          LOG_ERR ("can't locate file: %s", config_file_name);
-          return FALSE;
-        }
-#else
       length = strlen (config_dir) + strlen (config_file_name) + 2;
       configname = memory_allocation (length);
       if (configname == NULL)
@@ -228,7 +204,6 @@ configfile_load (void)
           LOG_ERR ("not enough memory to allocate %i bytes!", length);
           return FALSE;
         }
-#endif
     }
   sprintf (configname, "%s/%s", config_dir, config_file_name);
   LOG_INF ("configuration filename: %s", configname);
@@ -245,7 +220,7 @@ configfile_load (void)
       lisp_free (root_obj);
       return TRUE;
     }
-  if (strcmp (lisp_symbol (lisp_car (root_obj)), "powermanga-config") != 0)
+  if (strcmp (lisp_symbol (lisp_car (root_obj)), "mangadualist-config") != 0)
     {
       LOG_ERR ("lisp_read_file(%s) failed!", configname);
       lisp_free (root_obj);
@@ -306,7 +281,7 @@ configfile_print();
 }
 
 /** 
- * Save config file "~/.tlkgames/powermanga.conf"
+ * Save config file "~/.alphadelusion/mangadualist.conf"
  */
 void
 configfile_save (void)
@@ -326,7 +301,7 @@ configfile_save (void)
     {
       return;
     }
-  fprintf (config, "(powermanga-config\n");
+  fprintf (config, "(mangadualist-config\n");
   fprintf (config, "\t;; the following options can be set to #t or #f:\n");
   fprintf (config, "\t(fullscreen %s)\n",
            power_conf->fullscreen ? "#t" : "#f");
@@ -414,12 +389,12 @@ configfile_scan_arguments (Sint32 arg_count, char **arg_values)
                    "               x-axis, y-axis, fire button, option button, and start button,\n"
                    "               respectively.  The following argument must be 5 integers\n"
                    "               seperated by commas.  The default is 0,1,0,1,2\n");
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
           fprintf (stdout, "--window       windowed mode\n");
           fprintf (stdout, "--fullscreen   fullscreen mode\n");
 #endif
           fprintf (stdout,
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
                    "-q             \n"
                    "-v             verbose mode\n"
                    "--verbose      verbose mode (more messages)\n"
@@ -433,12 +408,12 @@ configfile_scan_arguments (Sint32 arg_count, char **arg_values)
                    "keys recognized during the game:\n"
                    "[Ctrl] + [S]   enable/disable the music\n"
                    "[Ctrl] + [Q]   finish the play current\n"
-                   "[Ctrl] + [A]   about Powermanga\n"
-                   "[F10]          quit Powermanga\n"
+                   "[Ctrl] + [A]   about Mangadualist\n"
+                   "[F10]          quit Mangadualist\n"
                    "[P]            enable/disable pause\n"
                    "[Page Down]    volume down\n"
                    "[Page Up]      volume up\n");
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
           fprintf (stdout,
                    "F              switch between full screen and windowed mode\n");
 #endif
@@ -449,7 +424,7 @@ configfile_scan_arguments (Sint32 arg_count, char **arg_values)
       /* print version information and exit */
       if (!strcmp (arg_values[i], "--version"))
         {
-          printf (POWERMANGA_VERSION);
+          printf (MANGADUALIST_VERSION);
           printf ("\n");
           printf ("copyright (c) 1998-2015 TLK Games\n");
           printf ("website: http://linux.tlk.fr/\n");

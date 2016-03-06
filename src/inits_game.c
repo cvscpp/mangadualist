@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "config_file.h"
@@ -253,9 +253,6 @@ tlk_games_logo_extract (void)
 void
 release_game (void)
 {
-#if defined(_WIN32_WCE)
-  free_wince_module_pathname ();
-#endif
   bitmap_free (&logotlk[0], 1, TLKLOGO_MAXOF_IMAGES, TLKLOGO_MAXOF_IMAGES);
   /* free video ressources (xorg-x11 or SDL) */
   display_release ();

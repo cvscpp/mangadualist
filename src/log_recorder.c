@@ -25,12 +25,12 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "log_recorder.h"
 #include <time.h>
 
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
 #if defined(UNDER_DEVELOPMENT)
 #define ENABLE_LOG_FILE
 #endif
@@ -43,9 +43,9 @@ static FILE *log_fstream = NULL;
 static char *buffer_message = NULL;
 static char *output_message = NULL;
 static LOG_LEVELS verbose_level = LOG_NOTHING;
-#if !defined(_WIN32_WCE)
+
 static struct tm *cur_time = NULL;
-#endif
+
 
 static const char *log_levels[LOG_NUMOF] = {
   "(--)",
@@ -77,14 +77,11 @@ log_set_level (LOG_LEVELS verbose)
 bool
 log_initialize (LOG_LEVELS verbose)
 {
-#if defined(_WIN32_WCE)
-  char *pathname;
-#endif
 #if defined(ENABLE_LOG_FILE)
   const char *filename;
 #endif
   log_set_level (verbose);
-#ifndef WIN32
+
   if (cur_time == NULL)
     {
       cur_time = (struct tm *) memory_allocation (sizeof (struct tm));
@@ -96,7 +93,7 @@ log_initialize (LOG_LEVELS verbose)
           return FALSE;
         }
     }
-#endif
+
   if (buffer_message == NULL)
     {
       buffer_message = memory_allocation (LOG_MESSAGE_SIZE);
@@ -121,38 +118,16 @@ log_initialize (LOG_LEVELS verbose)
     }
 
 #if defined(ENABLE_LOG_FILE)
-#if !defined(_WIN32)
-  filename = "/tmp/powermanga-log.txt";
-#else
-  filename = "powermanga-log.txt";
-#endif
-#if defined(_WIN32_WCE)
-  pathname = locate_data_file (filename);
-  if (pathname == NULL)
-    {
-      fprintf (stderr, "log_recorder.c/log_initialize()"
-               "can't locate file: %s", filename);
-      return FALSE;
-    }
-  filename = pathname;
-#endif
+
+  filename = "/tmp/mangadualist-log.txt";
   log_fstream = fopen (filename, "a");
   if (log_fstream == NULL)
     {
-#if defined(_WIN32_WCE)
-      fprintf (stderr, "log_recorder.c/log_initialize()"
-               "fopen(%s) failed\n", filename);
-      free_memory (pathname);
-#else
       fprintf (stderr, "log_recorder.c/log_initialize()"
                "fopen(%s) failed (%s)\n", filename, strerror (errno));
-#endif
       return FALSE;
     }
-#if defined(_WIN32_WCE)
-  free_memory (pathname);
-#endif
-#endif
+ #endif
   return TRUE;
 }
 
@@ -179,13 +154,13 @@ log_close (void)
       free_memory (output_message);
       output_message = NULL;
     }
-#ifndef WIN32
+
   if (cur_time != NULL)
     {
       free_memory ((char *) cur_time);
       cur_time = NULL;
     }
-#endif
+
 }
 
 /**
@@ -203,7 +178,6 @@ log_write (LOG_LEVELS level, const char *filename, Sint32 line_num,
            const char *function, const char *message)
 {
   size_t msg_len;
-#if !defined(_WIN32_WCE)
   time_t now;
   if (log_fstream == NULL)
     {
@@ -218,11 +192,7 @@ log_write (LOG_LEVELS level, const char *filename, Sint32 line_num,
     }
 
   /* Get the current time */
-#ifndef WIN32
   localtime_r (&now, cur_time);
-#else
-  cur_time = localtime (&now);
-#endif
   if (cur_time == NULL)
     {
       fprintf (stderr, "log_recorder.c/log_write()"
@@ -238,19 +208,6 @@ log_write (LOG_LEVELS level, const char *filename, Sint32 line_num,
                       cur_time->tm_hour, cur_time->tm_min, cur_time->tm_sec,
                       log_levels[level], filename, line_num, function,
                       message);
-#else
-  SYSTEMTIME cur_time;
-  GetLocalTime (&cur_time);
-  msg_len = _snprintf (output_message, LOG_OUTPUT_SIZE,
-                       "%04u-%02u-%02u %02u:%02u:%02u %s "
-                       "[File: %s][Line: %d][Function: %s] %s\n",
-                       cur_time.wYear,
-                       cur_time.wMonth,
-                       cur_time.wDay,
-                       cur_time.wHour, cur_time.wMinute, cur_time.wSecond,
-                       log_levels[level], filename, line_num, function,
-                       message);
-#endif
   if (fwrite (output_message, sizeof (char), msg_len, log_fstream) != msg_len)
     {
       fprintf (stderr, "log_recorder.c/log_write()" "fwrite() failed!\n");
@@ -271,14 +228,8 @@ static void
 log_put (LOG_LEVELS level, const char *filename, Sint32 line_num,
          const char *function, const char *message)
 {
-#if defined (_WIN32)
-  _snprintf (output_message, LOG_OUTPUT_SIZE, "%s %s [%s:%d, %s]\n",
-             log_levels[level], message, filename, line_num, function);
-  /* OutputDebugString(output_message); */
-#else
   snprintf (output_message, LOG_OUTPUT_SIZE, "%s %s [%s:%d, %s]\n",
             log_levels[level], message, filename, line_num, function);
-#endif
   if (level == LOG_ERROR)
     {
       fprintf (stderr, "%s", output_message);
@@ -308,11 +259,7 @@ write_log (LOG_LEVELS level, const char *filename,
     {
       return;
     }
-#if defined (_WIN32)
-  msg_len = _vsnprintf (buffer_message, LOG_MESSAGE_SIZE, format, args);
-#else
   msg_len = vsnprintf (buffer_message, LOG_MESSAGE_SIZE, format, args);
-#endif
   if (msg_len < 1)
     {
       return;

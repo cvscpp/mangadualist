@@ -28,10 +28,10 @@
 #define __LOG_RECORD__
 
 #if defined(__GNUC__) && !defined(__clang__) 
-#define POWERMANGA_LOG_ENABLED
+#define MANGADUALIST_LOG_ENABLED
 #endif
 
-#if !defined(POWERMANGA_LOG_ENABLED)
+#if !defined(MANGADUALIST_LOG_ENABLED)
 
 #define LOG_DBG(...)  ( (void)0 )
 #define LOG_INF(...)  ( (void)0 )

@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "config_file.h"
@@ -216,7 +216,7 @@ menu_item_selected (MENU_SELECTED item_num)
        * start a new game
        */
     case MENU_PLAY_ITEM:
-#if defined(POWERMANGA_SDL) && defined(USE_SDL_JOYSTICK)
+#if defined(MANGADUALIST_SDL) && defined(USE_SDL_JOYSTICK)
       display_open_joysticks ();
 #endif
       /* reset player parameters */
@@ -283,7 +283,7 @@ menu_item_selected (MENU_SELECTED item_num)
       scrolltext_disable (SCROLL_PRESENT);
       break;
 
-      /* quit Powermanga */
+      /* quit Mangadualist */
     case MENU_QUIT_ITEM:
       quit_game = TRUE;
       break;

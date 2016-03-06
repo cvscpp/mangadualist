@@ -30,6 +30,12 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to enable SDL support */
+#undef MANGADUALIST_SDL
+
+/* Define to enable X11 support */
+#undef MANGADUALIST_X11
+
 /* Name of package */
 #undef PACKAGE
 
@@ -53,12 +59,6 @@
 
 /* Enable option to export sprites to PNG) */
 #undef PNG_EXPORT_ENABLE
-
-/* Define to enable SDL support */
-#undef POWERMANGA_SDL
-
-/* Define to enable X11 support */
-#undef POWERMANGA_X11
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

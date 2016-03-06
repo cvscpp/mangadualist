@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "config_file.h"
@@ -695,7 +695,7 @@ high_score_rotate (void)
       keycode = sprites_string_input (playername);
 
       /* "return" or "enter" key is pressed? */
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
       if (keycode == SDLK_RETURN)
 #else
       if (keycode == XK_Return)
@@ -769,27 +769,10 @@ high_scores_load_file (void)
   FILE *fstream;
   char *filedata;
   const char *filename = score_filenames[power_conf->difficulty];
-#if defined(_WIN32_WCE)
-  char *pathname = locate_data_file (filename);
-  if (pathname == NULL)
-    {
-      LOG_ERR ("can't locate file: %s", filename);
-      return FALSE;
-    }
-  filename = pathname;
-#endif
-
   fstream = fopen (filename, "rb");
-#if defined(_WIN32_WCE)
-  free_memory (pathname);
-#endif
   if (fstream == NULL)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("fopen(%s) failed", filename);
-#else
       LOG_ERR ("fopen(%s) return %s", filename, strerror (errno));
-#endif
       return NULL;
     }
   fsize = get_file_size (fstream);
@@ -810,11 +793,7 @@ high_scores_load_file (void)
   if (fread (filedata, sizeof (char), fsize, fstream) != fsize)
     {
       free_memory (filedata);
-#if defined(_WIN32_WCE)
-      LOG_ERR ("fread(%s) failed", filename);
-#else
       LOG_ERR ("fread(%s) return %s", filename, strerror (errno));
-#endif
       return NULL;
     }
   LOG_DBG ("file \"%s\" was loaded in memory", filename);
@@ -912,9 +891,6 @@ high_score_save (void)
   Uint32 i, j;
   Sint32 *buffer32;
   char *filedata, *buffer;
-#if defined(_WIN32_WCE)
-  char *pathname;
-#endif
   const char *filename = score_filenames[power_conf->difficulty];
 
   /* allocate a temporary buffer */
@@ -945,15 +921,6 @@ high_score_save (void)
                             SIZE_OF_SCORES_FILE - sizeof (Sint32));
   int_to_little_endian (sum, buffer32);
 
-#if defined(_WIN32_WCE)
-  pathname = locate_data_file (filename);
-  if (pathname == NULL)
-    {
-      LOG_ERR ("can't locate file: %s", filename);
-      return;
-    }
-  filename = pathname;
-#endif
   if (!file_write (filename, filedata, SIZE_OF_SCORES_FILE))
     {
       LOG_ERR ("file_write (%s) failed", filename);
@@ -962,9 +929,6 @@ high_score_save (void)
     {
       LOG_INF ("\"%s\" file was saved", filename);
     }
-#if defined(_WIN32_WCE)
-  free_memory (pathname);
-#endif
   free_memory (filedata);
   return;
 }
@@ -1618,7 +1582,7 @@ order_run (void)
                 /* force unsigned */
                 keycode = _valeur;
                 order_last_keycode = _valeur;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
                 switch (keycode)
                   {
                     /* XK_BackSpace */
@@ -1699,7 +1663,7 @@ order_run (void)
 
   switch (keycode)
     {
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_DOWN:
 #else
     case XK_Down:
@@ -1710,7 +1674,7 @@ order_run (void)
           order_delete_line (0);
         }
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_UP:
 #else
     case XK_Up:
@@ -1724,14 +1688,14 @@ order_run (void)
           order_y_cursor--;
         }
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_INSERT:
 #else
     case XK_Insert:
 #endif
       order_insert_line (order_y_cursor);
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_RETURN:
 #else
     case XK_Return:
@@ -1744,7 +1708,7 @@ order_run (void)
       order_x_cursor = 0;
       break;
       /* [F3]  moves the cursor to top-left screen corner */
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_F3:
 #else
     case XK_F3:
@@ -1753,7 +1717,7 @@ order_run (void)
       order_y_cursor = 0;
       break;
       /* [F4] clear screen */
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_F4:
 #else
     case XK_F4:
@@ -1761,7 +1725,7 @@ order_run (void)
       order_clear_screen ();
       break;
       /* [F5] erase the current linge */
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_F5:
 #else
     case XK_F5:
@@ -2014,10 +1978,6 @@ order_release_data ()
 static void
 order_save_keystroke (void)
 {
-#if defined(_WIN32_WCE)
-  /* FIXME to implement */
-  LOG_ERR ("not implemented");
-#else
   Sint32 *ptr32;
   Sint32 filehandle;
   Uint32 size = 0;
@@ -2043,7 +2003,6 @@ order_save_keystroke (void)
         }
       close (filehandle);
     }
-#endif
 }
 
 /**

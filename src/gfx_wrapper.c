@@ -26,7 +26,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "assembler.h"
 #include "images.h"
@@ -67,7 +67,7 @@ type_routine_gfx (void)
 void
 put_pixel (char *dest, Sint32 xcoord, Sint32 ycoord, Sint32 color)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_ERR ("dest = %p, xcoord = %i, ycoord = %i, color = %i "
            "not implemented", dest, xcoord, ycoord, color);
 #else

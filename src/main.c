@@ -24,7 +24,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "config_file.h"
@@ -46,7 +46,6 @@
 #include "options_panel.h"
 #include "scrolltext.h"
 #include "satellite_protections.h"
-#include "script_page.h"
 #include "shockwave.h"
 #include "spaceship.h"
 #include "sprites_string.h"
@@ -55,9 +54,9 @@
 #include "texts.h"
 #include "text_overlay.h"
 
-/* TRUE = leave the Powermanga game */
+/* TRUE = leave the Mangadualist game */
 bool quit_game = FALSE;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
 /* game speed : 70 frames/sec (1000 <=> 1 seconde ; 1000 / 70 =~ 14) */
 static const Uint32 GAME_FRAME_RATE = 14;
 /* movie speed: 28 frames/sec */
@@ -73,44 +72,14 @@ static bool initialize_and_run (void);
 static void main_loop (void);
 
 /**
- * Returns to the standard GP2X menu.
- */
-#ifdef POWERMANGA_GP2X
-void
-returnToMenu (void)
-{
-  /* This is how to quit back to the menu - calling exit() will just cause
-   * the GP2X to "hang". execl() will replace the current process image
-   *  with that of the menu program, and then execute it */
-  chdir ("/usr/gp2x");
-  execl ("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
-}
-#else
-#ifdef POWERMANGA_PSP
-void
-returnToMenu (void)
-{
-  sceKernelExitGame ();
-}
-#endif
-#endif
-
-/**
  * The main function is where the program starts execution.
  */
 Sint32
 main (Sint32 args_count, char **arguments)
 {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   LOG_LEVELS log_level = LOG_NOTHING;
 #endif
-  /* GP2X or PSP port */
-#ifdef POWERMANGA_HANDHELD_CONSOLE
-  /* Use atexit() to call the return-to-menu function,
-   * in case of crashes, etc. */
-  atexit (returnToMenu);
-#endif
-
 
   /* allocate memory table */
 #if defined (USE_MALLOC_WRAPPER)
@@ -119,7 +88,7 @@ main (Sint32 args_count, char **arguments)
       exit (0);
     }
 #endif
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   log_initialize (LOG_INFO);
 #endif
 
@@ -131,13 +100,10 @@ main (Sint32 args_count, char **arguments)
 #endif
       exit (0);
     }
-#ifdef _WIN32_WCE
-  power_conf->verbose = 1;
-  display_windows_ce_infos ();
-#endif
-  if (configfile_scan_arguments (args_count, arguments))
+
+    if (configfile_scan_arguments (args_count, arguments))
     {
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
       switch (power_conf->verbose)
         {
         case 1:
@@ -152,13 +118,7 @@ main (Sint32 args_count, char **arguments)
         }
       log_set_level (log_level);
 #endif
-#if defined(POWERMANGA_HANDHELD_CONSOLE) || defined(_WIN32_WCE)
-      /* We require a 320x200 output size to fit on
-       * the GP2X or PSP's display */
-      power_conf->fullscreen = 1;
-      pixel_size = 1;
-#endif
-      if (power_conf->extract_to_png)
+    if (power_conf->extract_to_png)
         {
           power_conf->fullscreen = 0;
           power_conf->nosound = TRUE;
@@ -169,7 +129,7 @@ main (Sint32 args_count, char **arguments)
     }
   release_game ();
 
-#if defined(POWERMANGA_LOG_ENABLED)
+#if defined(MANGADUALIST_LOG_ENABLED)
   log_close ();
 #endif
 
@@ -179,9 +139,6 @@ main (Sint32 args_count, char **arguments)
 #endif
 
   /* launch html donation page before leaving */
-#if !defined(_WIN32_WCE) && defined(_WIN32)
-  ShellExecute (0, "open", ".\\html\\ar01s06s02.html", 0, 0, SW_SHOWNORMAL);
-#endif
   return 0;
 }
 
@@ -192,7 +149,7 @@ main (Sint32 args_count, char **arguments)
 static bool
 initialize_and_run (void)
 {
-  LOG_INF (POWERMANGA_VERSION);
+  LOG_INF (MANGADUALIST_VERSION);
   configfile_print ();
   type_routine_gfx ();
   if (!inits_game ())
@@ -203,7 +160,7 @@ initialize_and_run (void)
 #ifdef PNG_EXPORT_ENABLE
   if (power_conf->extract_to_png)
     {
-      LOG_INF ("Extracting sprites Powermanga in PNG");
+      LOG_INF ("Extracting sprites Mangadualist in PNG");
       if (!create_dir (EXPORT_DIR))
         {
           return FALSE;
@@ -233,12 +190,12 @@ initialize_and_run (void)
   main_loop ();
   fps_print ();
 
-  LOG_INF ("Powermanga exited normally");
+  LOG_INF ("Mangadualist exited normally");
   return TRUE;
 }
 
 /**
- * Main loop of the Powermanga game
+ * Main loop of the Mangadualist game
  */
 void
 main_loop (void)
@@ -264,7 +221,7 @@ main_loop (void)
                                  GAME_FRAME_RATE);
             }
         }
-      /* handle Powermanga game */
+      /* handle Mangadualist game */
       if (!update_frame ())
         {
           quit_game = TRUE;

@@ -1,4 +1,4 @@
-MANGADualist is a fork of the famous TLK Powermanga 2D shoot-em-up game.
+Mangadualist is a fork of the famous TLK Powermanga 2D shoot-em-up game.
 
 Major changes:
 
@@ -10,8 +10,8 @@ ToDo:
 
 Notes:
 
-	* The game play, graphics and music are not changed at all.
-	* Some hardware support might be defunct (as i do not have handheld device for testing).
+	* The game play, graphics and music are not changed yet .
+	* Support for handheld devices and hostile operating systems has been dropped.
 
 Fot the original game, please visit
 
@@ -19,7 +19,11 @@ Fot the original game, please visit
 
 LEGAL
 
-	Powermanga is copyright TLK Games and available under the term of the GNU General Public License.
+	Mangadualist is copyleft by Alpha Delusion and best protected by GPLv3.
+	
+	Mangadualist is a fork of Powermanga by TLK Games. For the original 
+	Powermanga game, please visit
 
-	MANGADualist is best protected by GPLv3.
+		linux.tlk.fr/games/Powermanga
+
 

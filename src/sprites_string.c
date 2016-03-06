@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "images.h"
 #include "config_file.h"
@@ -1175,7 +1175,7 @@ sprites_string_input (sprite_string_struct * sprite_str)
       switch (joycode)
         {
         case IJOY_FIRE:
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
           keycode = SDLK_RETURN;
 #else
           keycode = XK_Return;
@@ -1187,14 +1187,14 @@ sprites_string_input (sprite_string_struct * sprite_str)
           sprite_chars_to_image (sprite_str);
           break;
         case IJOY_LEFT:
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
           sprites_string_input_code (sprite_str, SDLK_LEFT);
 #else
           sprites_string_input_code (sprite_str, XK_Left);
 #endif
           break;
         case IJOY_RIGHT:
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
           sprites_string_input_code (sprite_str, SDLK_RIGHT);
 #else
           sprites_string_input_code (sprite_str, XK_Right);
@@ -1278,21 +1278,21 @@ sprites_string_input_code (sprite_string_struct * sprite_str, Sint32 keycode)
   /* check key code */
   switch (keycode)
     {
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_LEFT:
 #else
     case XK_Left:
 #endif
       sprite_str->cursor_pos--;
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_RIGHT:
 #else
     case XK_Right:
 #endif
       sprite_str->cursor_pos++;
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_BACKSPACE:
 #else
     case XK_BackSpace:
@@ -1313,7 +1313,7 @@ sprites_string_input_code (sprite_string_struct * sprite_str, Sint32 keycode)
       sprite_str->cursor_pos--;
       sprite_chars_to_image (sprite_str);
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_DELETE:
 #else
     case XK_Delete:
@@ -1325,7 +1325,7 @@ sprites_string_input_code (sprite_string_struct * sprite_str, Sint32 keycode)
       sprite_str->string[sprite_str->num_of_chars - 1] = ' ';
       sprite_chars_to_image (sprite_str);
       break;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
     case SDLK_RETURN:
       break;
     case SDLK_UP:

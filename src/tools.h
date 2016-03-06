@@ -65,9 +65,6 @@ extern "C"
   void int_to_little_endian (Sint32 value, Sint32 * addr);
   void convert32bits_2bigendian (unsigned char *memory);
   void integer_to_ascii (Sint32 value, Uint32 padding, char *str);
-#if defined(_WIN32_WCE)
-  void free_wince_module_pathname (void);
-#endif
   char *locate_data_file (const char *const name);
   char *load_file (const char *const filename);
   char *loadfile_with_lang (const char *const filename, Uint32 * const fsize);
@@ -86,9 +83,6 @@ extern "C"
   float calc_target_angle (Sint16 pxs, Sint16 pys, Sint16 pxd, Sint16 pyd);
   float get_new_angle (float old_angle, float new_angle, float agilite);
   bool create_dir (const char *dirname);
-#if defined(_WIN32_WCE)
-  void display_windows_ce_infos (void);
-#endif
   char *string_duplicate (register const char *str);
   bool alloc_precalulate_sinus (void);
   void free_precalulate_sinus (void);

@@ -3,5 +3,5 @@ SUBDIRS = texts src graphics graphics/bitmap graphics/bitmap/fonts graphics/spri
 EXTRA_DIST = bootstrap
 
 pkgdatadir = $(mandir)/man6
-dist_pkgdata_DATA = powermanga.6
+dist_pkgdata_DATA = mangadualist.6
 

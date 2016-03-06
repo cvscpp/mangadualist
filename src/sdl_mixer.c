@@ -25,7 +25,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "tools.h"
 #include "config_file.h"
 #include "display.h"
@@ -87,19 +87,11 @@ static const char *sounds_filenames[SOUND_NUMOF] = {
 };
 
 /** Filenames of the musics modules */
-#ifdef POWERMANGA_HANDHELD_CONSOLE
-static const char *musics_filenames[] = {
-  "sounds/handheld_console/music_menu.ogg",
-  "sounds/handheld_console/music_game.ogg",
-  "sounds/handheld_console/music_congratulations.ogg"
-};
-#else
 static const char *musics_filenames[] = {
   "sounds/music_menu.zik",
   "sounds/music_game.zik",
   "sounds/music_congratulations.zik"
 };
-#endif
 
 /** Internal format of the waves sounds */
 static Mix_Chunk *sounds_chunck[SOUND_NUMOF];
@@ -136,15 +128,9 @@ sound_once_init (void)
       power_conf->nosound = 1;
       return 1;
     }
-#ifdef POWERMANGA_GPX2
-  /* we need a reduced audio rate for the GP2X to make sure sound
-   * doesn't lag */
-  audio_rate = 22050;
-  audio_buffers = 64;
-#else
   audio_rate = 44100;
   audio_buffers = 4096;
-#endif
+
   audio_format = AUDIO_S16;
   if (Mix_OpenAudio (audio_rate, audio_format, 2, audio_buffers))
     {

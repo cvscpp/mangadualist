@@ -24,7 +24,7 @@
  * MA  02110-1301, USA.
  */
 #include "config.h"
-#include "powermanga.h"
+#include "mangadualist.h"
 #include "log_recorder.h"
 #include "tools.h"
 #include "config_file.h"
@@ -56,7 +56,7 @@ Uint32 mem_total_size;
 static Uint32 mem_maxreached_zones;
 #endif
 Uint32 loops_counter;
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
 static Uint32 time_begin;
 static Uint32 ticks_previous;
 #else
@@ -74,11 +74,6 @@ float *precalc_cos128 = NULL;
 float depix[13][32];
 /** Table used for displacement of the guided missile */
 float depiy[13][32];
-#if defined(_WIN32_WCE)
-/** The fully-qualified path for the directory that contains
- * the Powermanga executable on Windows Mobile */
-static char *wince_module_pathname = NULL;
-#endif
 
 /**
  * Initialize the memory table for our malloc() wrapper
@@ -469,72 +464,12 @@ integer_to_ascii (Sint32 value, Uint32 padding, char *str)
     }
 }
 
-/**
- * Frees the memory used for the full pathname of Powermagane directory
- */
-#if defined(_WIN32_WCE)
-void
-free_wince_module_pathname (void)
-{
-  if (wince_module_pathname != NULL)
-    {
-      free_memory (wince_module_pathname);
-      wince_module_pathname = NULL;
-    }
-}
-
-/**
- * Convert a wide-character string to a new character string
- * @param source Pointer to the wide-chars string to be converted  
- * @param length The number of wide-chars in the source string
- * @param code_page The code page used to perform the conversion
- * @return Pointer to the buffer to receive the translated string or
- *         NULL upon failure. This buffer must be released once it is 
- *         not needed anymore
- */
-char *
-wide_char_to_bytes (wchar_t * source, Uint32 length, Uint32 code_page)
-{
-  Sint32 size;
-  char *dest;
-  if (source == NULL)
-    {
-      return NULL;
-    }
-  if (length == 0)
-    {
-      length = wcslen (source) + 1;
-    }
-  size = WideCharToMultiByte (code_page, 0, source, length,
-                              NULL, 0, NULL, NULL);
-  if (size == 0)
-    {
-      LOG_ERR ("WideCharToMultiByte() failed!");
-      return NULL;
-    }
-  dest = memory_allocation (size);
-  if (dest == NULL)
-    {
-      LOG_ERR ("not enough memory to allocate %i bytes", size);
-    }
-  size = WideCharToMultiByte (code_page, 0, source, length,
-                              dest, size, NULL, NULL);
-  if (size == 0)
-    {
-      LOG_ERR ("WideCharToMultiByte() failed!");
-      free_memory (dest);
-      return NULL;
-    }
-  dest[size] = 0;
-  return dest;
-}
-#endif
 
 /** Directory list to locate a file */
 static const char *data_directories[] = {
   /* normally unused, except when running from the source directory... */
   ".",
-  /* special value meaning "$(PREFIX)/share/games/powermanga/" */
+  /* special value meaning "$(PREFIX)/share/games/mangadualist/" */
   /* also marks end of list */
   0
 };
@@ -551,78 +486,12 @@ static const char *data_directories[] = {
 char *
 locate_data_file (const char *const name)
 {
-#if defined(_WIN32_WCE)
-  wchar_t *filename;
-  char *pathname;
-  char c;
-  Uint32 i, j;
-  Uint32 len;
-  if (wince_module_pathname == NULL)
-    {
-      len = MAX_PATH * sizeof (wchar_t);
-      filename = (wchar_t *) memory_allocation (len);
-      if (filename == NULL)
-        {
-          LOG_ERR ("not enough memory to allocate %i bytes", len);
-          return NULL;
-        }
-      if (GetModuleFileName (NULL, filename, MAX_PATH) == 0)
-        {
-          LOG_ERR ("GetModuleFileName () failed!");
-          free_memory ((char *) filename);
-          return NULL;
-        }
-      /* removes the application name in the pathname */
-      i = wcslen (filename) - 1;
-      while (filename[i] != L'\\')
-        {
-          i--;
-        }
-      filename[i + 1] = 0;
-      wince_module_pathname = wide_char_to_bytes (filename, 0, CP_ACP);
-      if (wince_module_pathname == NULL)
-        {
-          LOG_ERR ("wide_char_to_bytes () failed!");
-          free_memory ((char *) filename);
-          return NULL;
-        }
-      free_memory ((char *) filename);
-    }
-  len = strlen (wince_module_pathname) + strlen (name) + 1;
-  pathname = memory_allocation (len);
-  if (pathname == NULL)
-    {
-      LOG_ERR ("not enough memory to allocate %i bytes", len);
-      return NULL;
-    }
-  strcpy (pathname, wince_module_pathname);
-  j = strlen (pathname);
-  for (i = 0; i < strlen (name); i++, j++)
-    {
-      c = name[i];
-      if (c == '/')
-        {
-          pathname[j] = '\\';
-        }
-      else
-        {
-          pathname[j] = c;
-        }
-    }
-  pathname[j] = 0;
-  return pathname;
-
-#else
   static const char bogus = '\0';
   static const char *home_dir;
   const char **p;
   char *pathname;
-#ifdef WIN32
-  struct _stat s;
-#else
   struct stat s;
-#endif
-  const char *subdir = "/share/games/powermanga/";
+  const char *subdir = "/share/games/mangadualist/";
 
   if (name == NULL)
     {
@@ -693,18 +562,10 @@ locate_data_file (const char *const name)
           strcat (pathname, "/");
           strcat (pathname, name);
         }
-#ifdef WIN32
-      if (_stat (pathname, &s) == 0 && !(s.st_mode & _S_IFDIR))
-        {
-          return pathname;
-        }
-
-#else
       if (stat (pathname, &s) == 0 && !S_ISDIR (s.st_mode))
         {
           return pathname;
         }
-#endif
       free_memory (pathname);
       if (*p == 0)
         {
@@ -713,7 +574,6 @@ locate_data_file (const char *const name)
     }
   /* not found */
   return NULL;
-#endif
 }
 
 
@@ -831,23 +691,6 @@ size_t
 get_file_size (FILE * fstream)
 {
   size_t fsize;
-#if defined(_WIN32_WCE)
-  if (fseek (fstream, 0, SEEK_END) != 0)
-    {
-      LOG_ERR ("fseek() failed");
-      return 0;
-    }
-  fsize = ftell (fstream);
-  if (fsize == -1)
-    {
-      LOG_ERR ("fread() failed");
-      return 0;
-    }
-  if (fseek (fstream, 0, SEEK_SET) != 0)
-    {
-      LOG_ERR ("fseek() failed");
-    }
-#else
   struct stat sb;
   if (fstat (fileno (fstream), &sb))
     {
@@ -855,7 +698,6 @@ get_file_size (FILE * fstream)
       return 0;
     }
   fsize = sb.st_size;
-#endif
   return fsize;
 }
 
@@ -871,18 +713,10 @@ load_absolute_file (const char *const filename, Uint32 * const filesize)
   size_t fsize;
   FILE *fstream;
   char *buffer;
-#ifdef WIN32
-  fstream = fopen (filename, "rb");
-#else
   fstream = fopen (filename, "r");
-#endif
   if (fstream == NULL)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("can't open file  %s", filename);
-#else
       LOG_ERR ("can't open file  %s (%s)", filename, strerror (errno));
-#endif
       return NULL;
     }
   fsize = get_file_size (fstream);
@@ -904,11 +738,7 @@ load_absolute_file (const char *const filename, Uint32 * const filesize)
   if (fread (buffer, sizeof (char), fsize, fstream) != fsize)
     {
       free_memory (buffer);
-#if defined(_WIN32_WCE)
-      LOG_ERR ("can't read file \"%s\"", filename);
-#else
       LOG_ERR ("can't read file \"%s\" (%s)", filename, strerror (errno));
-#endif
       fclose (fstream);
       return NULL;
     }
@@ -934,18 +764,10 @@ loadfile_into_buffer (const char *const filename, char *const buffer)
       LOG_ERR ("can't locate file: '%s'", filename);
       return FALSE;
     }
-#ifdef WIN32
-  fstream = fopen (pathname, "rb");
-#else
   fstream = fopen (pathname, "r");
-#endif
   if (fstream == NULL)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("can't open \"%s\" file", pathname);
-#else
       LOG_ERR ("can't open \"%s\" file (%s)", pathname, strerror (errno));
-#endif
       free_memory (pathname);
       return FALSE;
     }
@@ -958,11 +780,7 @@ loadfile_into_buffer (const char *const filename, char *const buffer)
     }
   if (fread (buffer, sizeof (char), fsize, fstream) != fsize)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("can't read \"%s\" file", pathname);
-#else
       LOG_ERR ("can't read \"%s\" file (%s)", pathname, strerror (errno));
-#endif
       fclose (fstream);
       free_memory (pathname);
       return FALSE;
@@ -980,42 +798,22 @@ file_write (const char *filename, const char *filedata, const size_t filesize)
   FILE *fstream;
 
   /* set umask so that files are group-writable */
-#if !defined(_WIN32_WCE)
-#ifdef WIN32
-  _umask (0002);
-#else
-  umask (0002);
-#endif
-#endif
-
   fstream = fopen (filename, "wb");
   if (fstream == NULL)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("fopen (%s) failed", filename);
-#else
       LOG_ERR ("fopen (%s) return: %s", filename, strerror (errno));
-#endif
       return FALSE;
     }
 
   if (fwrite (filedata, sizeof (char), filesize, fstream) != filesize)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("fwrite (%s) failed", filename);
-#else
       LOG_ERR ("fwrite (%s) return: %s", filename, strerror (errno));
-#endif
       fclose (fstream);
       return FALSE;
     }
   if (fclose (fstream) != 0)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("close (%s) failed", filename);
-#else
       LOG_ERR ("close (%s) return: %s", filename, strerror (errno));
-#endif
       return FALSE;
     }
   return TRUE;
@@ -1027,7 +825,7 @@ file_write (const char *filename, const char *filedata, const size_t filesize)
 void
 fps_init (void)
 {
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
   time_begin = SDL_GetTicks ();
   ticks_previous = SDL_GetTicks ();
 #else
@@ -1043,7 +841,7 @@ fps_init (void)
 void
 fps_print (void)
 {
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
   double fps;
   unsigned long duration;
   Sint32 time_end;
@@ -1133,7 +931,7 @@ fps_print (void)
 Sint32
 wait_next_frame (Sint32 delay, Sint32 max)
 {
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
   if (delay > max)
     {
       delay = max;
@@ -1159,7 +957,7 @@ wait_next_frame (Sint32 delay, Sint32 max)
 #endif
 }
 
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
 /**
  * Calculate diffence between 2 times
  * @return difference
@@ -1411,11 +1209,7 @@ fopen_data (const char *fname, const char *fmode)
   fi = fopen (fname, fmode);
   if (fi == NULL)
     {
-#if defined(_WIN32_WCE)
-      LOG_ERR ("fopen (%s, %s) failed!", fname, fmode);
-#else
       LOG_ERR ("fopen (%s, %s) return: %s", fname, fmode, strerror (errno));
-#endif
       return NULL;
     }
   return fi;
@@ -1429,36 +1223,6 @@ fopen_data (const char *fname, const char *fmode)
 bool
 create_dir (const char *dirname)
 {
-#if defined(_WIN32_WCE)
-  LOG_DBG ("create_dir(%s) not implemented!", dirname);
-  return FALSE;
-
-  /* FIXME convert char* ti wchar_t* */
-/*
-  bool result = TRUE;
-  if (CreateDirectory (config_dir, NULL) == FALSE)
-    {
-      if (GetLastError () != ERROR_ALREADY_EXISTS)
-        {
-          LOG_ERR ("CreateDirectory(%s) failed!", config_dir);
-          result = FALSE;
-        }
-    }
-  return result;
-*/
-#else
-#if defined(_WIN32)
-  Sint32 result;
-  result = _mkdir (dirname);
-  if (result == 0 || result == EEXIST)
-    {
-      return TRUE;
-    }
-  else
-    {
-      return FALSE;
-    }
-#else
   Sint32 result;
   result = mkdir (dirname, S_IRWXU);
   if (result == 0 || result == EEXIST)
@@ -1474,70 +1238,4 @@ create_dir (const char *dirname)
       LOG_ERR ("mkdir(%s): %s", dirname, strerror (errno));
       return FALSE;
     }
-#endif
-#endif
 }
-
-#if defined(_WIN32_WCE)
-#define PARAMAX_LEN 256
-#ifndef SPI_GETPLATFORMMANUFACTURER
-#define SPI_GETPLATFORMMANUFACTURER 262
-#endif
-#ifndef SPI_GETPLATFORMNAME
-#define SPI_GETPLATFORMNAME 260
-#endif
-void
-display_windows_ce_infos (void)
-{
-  Uint32 i;
-  char *param;
-  WCHAR wparam[PARAMAX_LEN + 1];
-  OSVERSIONINFO vinfo;
-  static const char *action_names[] = {
-    "SPI_GETPLATFORMMANUFACTURER",
-    "SPI_GETPLATFORMNAME",
-    "SPI_GETPLATFORMTYPE"
-  };
-  static const Uint32 actions[] = {
-    SPI_GETPLATFORMMANUFACTURER,
-    SPI_GETPLATFORMNAME,
-    SPI_GETPLATFORMTYPE
-  };
-  for (i = 0; i < sizeof (actions) / sizeof (Uint32); i++)
-    {
-      if (SystemParametersInfo (actions[i], PARAMAX_LEN, wparam, 0) == FALSE)
-        {
-          LOG_ERR ("SystemParametersInfo(%s) "
-                   "failed (error %i)", action_names[i], GetLastError ());
-          continue;
-        }
-      param = wide_char_to_bytes (wparam, 0, CP_ACP);
-      if (param == NULL)
-        {
-          continue;
-        }
-      LOG_INF ("%s %s", action_names[i], param);
-      free_memory (param);
-    }
-
-  if (GetVersionEx (&vinfo) == FALSE)
-    {
-      LOG_ERR ("GetVersionEx() " "failed (error %i)", GetLastError ());
-    }
-  else
-    {
-      if (vinfo.dwPlatformId != VER_PLATFORM_WIN32_CE)
-        {
-          LOG_ERR ("this system is not a Windows Embedded CE OS");
-        }
-      else
-        {
-          LOG_INF ("Windows Mobile %i.%i", vinfo.dwMajorVersion,
-                   vinfo.dwMinorVersion);
-        }
-    }
-
-  LOG_INF ("SM_CXSCREEN: %i; SM_CYSCREEN: %i",
-           GetSystemMetrics (SM_CXSCREEN), GetSystemMetrics (SM_CYSCREEN));
-}
-#endif

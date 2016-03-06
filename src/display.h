@@ -32,7 +32,7 @@ extern "C"
 {
 #endif
 
-#if defined(POWERMANGA_SDL)  && !defined(_WIN32_WCE)
+#if defined(MANGADUALIST_SDL)
 #define USE_SDL_JOYSTICK
 #endif
 
@@ -123,18 +123,13 @@ extern "C"
   bool load_pcx_into_buffer (const char *filename, char *buffer);
   bool create_movie_offscreen (void);
   void destroy_movie_offscreen (void);
-#ifdef POWERMANGA_SDL
+#ifdef MANGADUALIST_SDL
   void do_fullscreen (bool);
 #ifdef USE_SDL_JOYSTICK
   bool display_open_joysticks (void);
 #endif
 #endif
   void clear_keymap (void);
-
-#ifdef SHAREWARE_VERSION
-  void show_page_order (int num, char *lang, int cpt);
-#endif
-
 
   extern Sint32 display_width;
   extern Sint32 display_height;
