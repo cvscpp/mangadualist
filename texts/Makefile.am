@@ -1,5 +1,5 @@
 
-pkgdatadir = $(datadir)/games/powermanga/texts
+pkgdatadir = $(datadir)/games/mangadualist/texts
 
 dist_pkgdata_DATA = \
   about_en.txt \

@@ -1,5 +1,5 @@
 
-pkgdatadir = $(datadir)/games/powermanga/sounds
+pkgdatadir = $(datadir)/games/mangadualist/sounds
 
 dist_pkgdata_DATA = \
   music_congratulations.zik \
